@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"internal/app/file/banner"
+	"internal/app/file/ini"
+)
 
 func main() {
-	fmt.Println("Hello Mundo!")
+	bannerFile := banner.NewBanner()
+	iniFile := new(ini.File)
+	iniFile.Read()
+	bannerFile.Read()
 }
