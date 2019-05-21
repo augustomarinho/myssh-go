@@ -1,13 +1,16 @@
 package main
 
 import (
-	"internal/app/file/banner"
-	"internal/app/file/ini"
+	"fmt"
+	"internal/app/file"
 )
 
 func main() {
-	bannerFile := banner.NewBanner()
-	iniFile := new(ini.File)
-	iniFile.Read()
+	bannerFile := file.NewBanner()
 	bannerFile.Read()
+	fmt.Println(bannerFile.Content())
+
+	iniFile := file.NewINI()
+	iniFile.Read()
+	fmt.Println(iniFile.Sections())
 }
