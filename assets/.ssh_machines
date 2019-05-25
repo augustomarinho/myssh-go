@@ -1,9 +1,9 @@
 [env_1]
-localhost
-10.10.0.10
-10.20.30.40
+maq1=localhost
+maq2=10.10.0.10
+maq3=10.20.30.40
 
 [env_2]
 
 [env_3]
-localhost
+maq1=localhost
