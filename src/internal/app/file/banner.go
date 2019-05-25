@@ -18,11 +18,11 @@ func NewBanner() *Banner {
 	file.fileName = ".banner"
 	file.path = strings.Split(os.Getenv("GOPATH"), ":")[0]
 	file.path += "/assets/banner"
+	file.Read()
 	return file
 }
 
 func (banner *Banner) Read() {
-	fmt.Println("Reading banner file from path", banner.Path())
 	file, err := os.Open(banner.path)
 
 	if err != nil {
