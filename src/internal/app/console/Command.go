@@ -1,6 +1,7 @@
 package console
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 )
@@ -17,4 +18,8 @@ func (command *Command) Clear() {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
 	cmd.Run()
+}
+
+func (command *Command) Ssh(host string) {
+	fmt.Println("Implements")
 }

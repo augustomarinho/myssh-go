@@ -16,10 +16,17 @@ type Printer struct {
 }
 
 func (printer Printer) showRootMenu() {
-	fmt.Println("Environments:")
+	fmt.Println("[Environments]")
 	for index, content := range printer.ini.Sections()[1:] {
 		fmt.Printf("%d) %s\n", index, content)
 	}
+}
+
+func (printer Printer) showTypeNumerOrReturn() {
+	fmt.Println("Choose number or type 'r' to return")
+}
+func (printer Printer) breakLine() {
+	fmt.Println("")
 }
 
 func NewPrinter(iniFile file.INI) *Printer {
@@ -34,19 +41,27 @@ func NewPrinter(iniFile file.INI) *Printer {
 func (printer Printer) Show() {
 	printer.cmd.Clear()
 	fmt.Println(printer.bannerFile.Content())
+	printer.showTypeNumerOrReturn()
+	printer.breakLine()
 	printer.showRootMenu()
 }
 
 func (printer Printer) ShowOptions(option int) map[string]string {
+	printer.cmd.Clear()
+	fmt.Println(printer.bannerFile.Content())
 	option++
 	var sectionName = printer.ini.Sections()[option]
 	var sectionValuesMap map[string]string = printer.ReadOptions(sectionName)
 
+	fmt.Println("Environment:", sectionName)
 	var item int = 1
 	for k, v := range sectionValuesMap {
 		fmt.Printf("%d) %s - %s\n", item, k, v)
 		item++
 	}
+
+	printer.breakLine()
+	printer.showTypeNumerOrReturn()
 
 	return sectionValuesMap
 }
@@ -56,9 +71,6 @@ func (printer Printer) ReadOptions(sectionName string) map[string]string {
 }
 
 func (printer Printer) ReadInput() string {
-
-	fmt.Println("Option:")
-
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 
