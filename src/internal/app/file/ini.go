@@ -2,6 +2,7 @@ package file
 
 import (
 	"fmt"
+	"internal/app/datastructures"
 	"os"
 	"strings"
 
@@ -33,12 +34,6 @@ func NewINI() *INI {
 }
 
 func (iniFile *INI) Read() {
-	//fmt.Println("Reading file INI from", iniFile.fullFilePath)
-
-	// iniLoadOptions := ini.LoadOptions{
-	// 	AllowBooleanKeys: true,
-	// }
-
 	cfg, err := ini.Load(iniFile.fullFilePath)
 	iniFile.cfg = cfg
 	if err != nil {
@@ -53,15 +48,41 @@ func (iniFile INI) Sections() []string {
 	return iniFile.sections
 }
 
-func (iniFile INI) SectionValues(sectionName string) map[string]string {
-	mapValues := make(map[string]string)
+func (iniFile INI) SectionValues(sectionName string) []datastructures.KV {
 
 	var keys []*ini.Key
 	keys = iniFile.cfg.Section(sectionName).Keys()
 
-	for _, key := range keys {
-		mapValues[key.Name()] = key.Value()
+	var array = make([]datastructures.KV, len(keys))
+
+	for index, key := range keys {
+		var kv = datastructures.NewKV()
+		kv.Key = key.Name()
+		kv.Value = key.Value()
+		array[index] = *kv
 	}
 
-	return mapValues
+	return array
+}
+
+func (iniFile INI) GetSubSection(sectionName string, position int) (string, string) {
+	key := iniFile.cfg.Section(sectionName).Keys()[position]
+	return key.Name(), key.Value()
+}
+
+func (iniFile INI) DefaultSectionValues() map[string]string {
+
+	var sec, err = iniFile.cfg.GetSection(ini.DEFAULT_SECTION)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var mapDefaultValues map[string]string = make(map[string]string)
+
+	for _, key := range sec.Keys() {
+		mapDefaultValues[key.Name()] = key.Value()
+	}
+
+	return mapDefaultValues
 }

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"internal/app/console"
+	"internal/app/datastructures"
 	"internal/app/file"
 	"os"
 	"strings"
@@ -18,13 +19,15 @@ type Printer struct {
 func (printer Printer) showRootMenu() {
 	fmt.Println("[Environments]")
 	for index, content := range printer.ini.Sections()[1:] {
+		index++
 		fmt.Printf("%d) %s\n", index, content)
 	}
 }
 
-func (printer Printer) showTypeNumerOrReturn() {
+func (printer Printer) showTypeNumberOrReturn() {
 	fmt.Println("Choose number or type 'r' to return")
 }
+
 func (printer Printer) breakLine() {
 	fmt.Println("")
 }
@@ -41,33 +44,36 @@ func NewPrinter(iniFile file.INI) *Printer {
 func (printer Printer) Show() {
 	printer.cmd.Clear()
 	fmt.Println(printer.bannerFile.Content())
-	printer.showTypeNumerOrReturn()
+	printer.showTypeNumberOrReturn()
 	printer.breakLine()
 	printer.showRootMenu()
 }
 
-func (printer Printer) ShowOptions(option int) map[string]string {
+func (printer Printer) ShowSubMenus(menuPosition int) {
 	printer.cmd.Clear()
 	fmt.Println(printer.bannerFile.Content())
-	option++
-	var sectionName = printer.ini.Sections()[option]
-	var sectionValuesMap map[string]string = printer.ReadOptions(sectionName)
+	var menuName = printer.GetMenuName(menuPosition)
+	var subMenuMap []datastructures.KV = printer.ReadSubMenuItems(menuName)
 
-	fmt.Println("Environment:", sectionName)
-	var item int = 1
-	for k, v := range sectionValuesMap {
-		fmt.Printf("%d) %s - %s\n", item, k, v)
-		item++
+	fmt.Println("Environment:", menuName)
+	for index, kv := range subMenuMap {
+		fmt.Printf("%d) %s - %s\n", index, kv.Key, kv.Value)
 	}
 
 	printer.breakLine()
-	printer.showTypeNumerOrReturn()
-
-	return sectionValuesMap
+	printer.showTypeNumberOrReturn()
 }
 
-func (printer Printer) ReadOptions(sectionName string) map[string]string {
-	return printer.ini.SectionValues(sectionName)
+func (printer Printer) GetMenuName(menuPosition int) string {
+	return printer.ini.Sections()[menuPosition]
+}
+
+func (printer Printer) GetSubmenu(menuName string, subMenuPosition int) (string, string) {
+	return printer.ini.GetSubSection(menuName, subMenuPosition)
+}
+
+func (printer Printer) ReadSubMenuItems(menuName string) []datastructures.KV {
+	return printer.ini.SectionValues(menuName)
 }
 
 func (printer Printer) ReadInput() string {

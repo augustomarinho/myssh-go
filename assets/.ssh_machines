@@ -1,9 +1,13 @@
+username=augusto.marinho
+
 [env_1]
 maq1=localhost
 maq2=10.10.0.10
 maq3=10.20.30.40
 
 [env_2]
+maq1=localhost
+maq2=10.10.0.10
 
 [env_3]
 maq1=localhost

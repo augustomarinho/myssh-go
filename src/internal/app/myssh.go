@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"internal/app/file"
 	"internal/app/menu"
+	"os"
 	"strconv"
 )
 
@@ -21,18 +22,38 @@ func NewMyssh() *Myssh {
 }
 
 func (myssh *Myssh) Run() {
+
 	iniFile := file.NewINI()
 	iniFile.Read()
 
 	menu := menu.NewPrinter(*iniFile)
-	menu.Show()
+	for true {
+		menu.Show()
+		var menuInput = menu.ReadInput()
 
-	var input = menu.ReadInput()
-	option, err := strconv.Atoi(input)
+		if len(menuInput) == 0 || menuInput == "r" {
+			fmt.Println("good bye")
+			os.Exit(1)
+		}
+		menuOption, err := strconv.Atoi(menuInput)
 
-	if err != nil {
-		fmt.Println(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		menu.ShowSubMenus(menuOption)
+		var menuName = menu.GetMenuName(menuOption)
+		var subMenuInput = menu.ReadInput()
+		if len(subMenuInput) == 0 || subMenuInput == "r" {
+			continue
+		}
+
+		optionSubMenu, errSubMenu := strconv.Atoi(subMenuInput)
+		if errSubMenu != nil {
+			fmt.Println(errSubMenu)
+		}
+
+		var key, value = menu.GetSubmenu(menuName, optionSubMenu)
+		fmt.Println(key, value)
 	}
-
-	menu.ShowOptions(option)
 }
