@@ -66,6 +66,7 @@ func (iniFile INI) SectionValues(sectionName string) []datastructures.KV {
 }
 
 func (iniFile INI) GetSubSection(sectionName string, position int) (string, string) {
+	//FIXME: It's necessary control error
 	key := iniFile.cfg.Section(sectionName).Keys()[position]
 	return key.Name(), key.Value()
 }

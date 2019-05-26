@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"internal/app/file"
 	"internal/app/menu"
+	menuPkg "internal/app/menu"
 	"os"
 	"strconv"
 )
@@ -55,5 +56,7 @@ func (myssh *Myssh) Run() {
 
 		var key, value = menu.GetSubmenu(menuName, optionSubMenu)
 		fmt.Println(key, value)
+		fmt.Println(menu.GetConfigByName(menuPkg.USERNAME))
+		menu.ReadInput()
 	}
 }

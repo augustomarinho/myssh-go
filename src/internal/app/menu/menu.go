@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+const (
+	USERNAME = "username"
+)
+
 type Printer struct {
 	ini        file.INI
 	cmd        *console.Command
@@ -56,8 +60,13 @@ func (printer Printer) ShowSubMenus(menuPosition int) {
 	var subMenuMap []datastructures.KV = printer.ReadSubMenuItems(menuName)
 
 	fmt.Println("Environment:", menuName)
-	for index, kv := range subMenuMap {
-		fmt.Printf("%d) %s - %s\n", index, kv.Key, kv.Value)
+
+	if len(subMenuMap) > 0 {
+		for index, kv := range subMenuMap {
+			fmt.Printf("%d) %s - %s\n", index, kv.Key, kv.Value)
+		}
+	} else {
+		fmt.Println("Invalid Option")
 	}
 
 	printer.breakLine()
@@ -65,11 +74,21 @@ func (printer Printer) ShowSubMenus(menuPosition int) {
 }
 
 func (printer Printer) GetMenuName(menuPosition int) string {
-	return printer.ini.Sections()[menuPosition]
+	var secLen = len(printer.ini.Sections())
+	if menuPosition <= secLen {
+		return printer.ini.Sections()[menuPosition]
+	}
+	return "Invalid Option"
 }
 
 func (printer Printer) GetSubmenu(menuName string, subMenuPosition int) (string, string) {
 	return printer.ini.GetSubSection(menuName, subMenuPosition)
+}
+
+func (printer Printer) GetConfigByName(configName string) string {
+	defaultValuesMap := printer.ini.DefaultSectionValues()
+
+	return defaultValuesMap[configName]
 }
 
 func (printer Printer) ReadSubMenuItems(menuName string) []datastructures.KV {
