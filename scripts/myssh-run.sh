@@ -9,7 +9,9 @@ GO=${GO:-`which go`}
 
 cd $SRC_DIR
 
-$GO install
+echo "Building project"
+$GO install -a
 
+echo "Running"
 cd $BIN_DIR
 ./app

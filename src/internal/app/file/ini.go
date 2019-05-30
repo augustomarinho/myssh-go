@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"fmt"
 	"internal/app/datastructures"
 	"os"
@@ -65,10 +66,15 @@ func (iniFile INI) SectionValues(sectionName string) []datastructures.KV {
 	return array
 }
 
-func (iniFile INI) GetSubSection(sectionName string, position int) (string, string) {
-	//FIXME: It's necessary control error
-	key := iniFile.cfg.Section(sectionName).Keys()[position]
-	return key.Name(), key.Value()
+func (iniFile INI) GetSubSection(sectionName string, position int) (string, string, error) {
+	var keySize = len(iniFile.cfg.Section(sectionName).Keys())
+
+	if position < keySize {
+		key := iniFile.cfg.Section(sectionName).Keys()[position]
+		return key.Name(), key.Value(), nil
+	}
+
+	return "", "", errors.New("Invalid Option")
 }
 
 func (iniFile INI) DefaultSectionValues() map[string]string {

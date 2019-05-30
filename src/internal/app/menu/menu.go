@@ -2,6 +2,7 @@ package menu
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"internal/app/console"
 	"internal/app/datastructures"
@@ -32,8 +33,16 @@ func (printer Printer) showTypeNumberOrReturn() {
 	fmt.Println("Choose number or type 'r' to return")
 }
 
-func (printer Printer) breakLine() {
+func (printer Printer) BreakLine() {
 	fmt.Println("")
+}
+
+func (printer Printer) ShowMessage(message ...string) {
+	fmt.Println(message)
+}
+
+func (printer Printer) ShowError(message error) {
+	fmt.Println(message)
 }
 
 func NewPrinter(iniFile file.INI) *Printer {
@@ -49,14 +58,14 @@ func (printer Printer) Show() {
 	printer.cmd.Clear()
 	fmt.Println(printer.bannerFile.Content())
 	printer.showTypeNumberOrReturn()
-	printer.breakLine()
+	printer.BreakLine()
 	printer.showRootMenu()
 }
 
-func (printer Printer) ShowSubMenus(menuPosition int) {
+func (printer Printer) ShowSubMenus(menuName string) {
 	printer.cmd.Clear()
 	fmt.Println(printer.bannerFile.Content())
-	var menuName = printer.GetMenuName(menuPosition)
+
 	var subMenuMap []datastructures.KV = printer.ReadSubMenuItems(menuName)
 
 	fmt.Println("Environment:", menuName)
@@ -69,19 +78,19 @@ func (printer Printer) ShowSubMenus(menuPosition int) {
 		fmt.Println("Invalid Option")
 	}
 
-	printer.breakLine()
+	printer.BreakLine()
 	printer.showTypeNumberOrReturn()
 }
 
-func (printer Printer) GetMenuName(menuPosition int) string {
+func (printer Printer) GetMenuName(menuPosition int) (string, error) {
 	var secLen = len(printer.ini.Sections())
-	if menuPosition <= secLen {
-		return printer.ini.Sections()[menuPosition]
+	if menuPosition < secLen {
+		return printer.ini.Sections()[menuPosition], nil
 	}
-	return "Invalid Option"
+	return "", errors.New("Invalid Option")
 }
 
-func (printer Printer) GetSubmenu(menuName string, subMenuPosition int) (string, string) {
+func (printer Printer) GetSubmenu(menuName string, subMenuPosition int) (string, string, error) {
 	return printer.ini.GetSubSection(menuName, subMenuPosition)
 }
 
