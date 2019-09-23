@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"internal/app/console"
 	"internal/app/file"
 	"internal/app/menu"
 	menuPkg "internal/app/menu"
@@ -20,6 +21,14 @@ type Myssh struct {
 func NewMyssh() *Myssh {
 	myssh := new(Myssh)
 	return myssh
+}
+
+func (Myssh Myssh) connect(user string, host string, args ...string) {
+	sshCmd := []string{user, "@", host}
+	sshCmd = append(sshCmd, args...)
+
+	command := console.NewCommand()
+	command.Ssh(sshCmd...)
 }
 
 func (myssh *Myssh) Run() {
@@ -70,9 +79,15 @@ func (myssh *Myssh) Run() {
 				break
 			}
 
-			menu.ShowMessage(key, value)
-			menu.ShowMessage(menu.GetConfigByName(menuPkg.USERNAME))
-			menu.ReadInput()
+			user := menu.GetConfigByName(menuPkg.USERNAME)
+			host := value
+
+			menu.ShowMessage("Connecting in ", key, value, "with user", user)
+			myssh.connect(user, host)
+
+			//menu.ShowMessage(key, value)
+			//menu.ShowMessage(menu.GetConfigByName(menuPkg.USERNAME))
+			//menu.ReadInput()
 		}
 
 		menu.BreakLine()

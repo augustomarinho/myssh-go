@@ -19,8 +19,13 @@ func (command *Command) Clear() {
 	cmd.Run()
 }
 
-func (command *Command) Ssh(host string, args ...string) {
+func (command *Command) Ssh(args ...string) {
+
 	cmd := exec.Command("ssh", args...)
 	cmd.Stdout = os.Stdout
-	cmd.Run()
+	err := cmd.Run()
+
+	if err != nil {
+		panic(err)
+	}
 }
