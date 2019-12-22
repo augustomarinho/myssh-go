@@ -24,7 +24,7 @@ func NewMyssh() *Myssh {
 }
 
 func (Myssh Myssh) connect(user string, host string, args ...string) {
-	sshCmd := []string{user, "@", host}
+	sshCmd := []string{user + "@" + host}
 	sshCmd = append(sshCmd, args...)
 
 	command := console.NewCommand()
